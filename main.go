@@ -2,9 +2,12 @@ package main
 
 import (
 	"fmt"
+	"html/template"
+	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
-import "github.com/gorilla/mux"
 
 func main() {
 	r := mux.NewRouter()
@@ -15,14 +18,28 @@ func main() {
 	http.ListenAndServe(":8080", nil)
 }
 
-func homeHandler(http.ResponseWriter, *http.Request) {
-	fmt.Println("Home")
+type Page struct {
+	UserName string
 }
 
-func registerHandler(http.ResponseWriter, *http.Request) {
+func homeHandler(w http.ResponseWriter, r *http.Request) {
+	p := &Page{"ggobbe"}
+
+	t, err := template.ParseFiles("static/tpl/home.html")
+	checkError(err)
+	t.Execute(w, p)
+}
+
+func registerHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Register")
 }
 
-func profileHandler(http.ResponseWriter, *http.Request) {
+func profileHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Profile")
+}
+
+func checkError(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
 }
