@@ -13,16 +13,23 @@ import (
 func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/", homeHandler)
-	r.HandleFunc("/register", registerHandler)
+	r.HandleFunc("/login", loginHandler)
 	r.HandleFunc("/profile", profileHandler)
 	http.Handle("/", r)
 	http.ListenAndServe(":8080", nil)
 }
 
-var store = sessions.NewCookieStore([]byte("something-very-secret"))
+var store = sessions.NewCookieStore([]byte("gomeet-for-gopher-gala-by-gg-and-mk"))
+
+var templates = template.Must(template.ParseFiles("static/tpl/header.html", "static/tpl/footer.html", "static/tpl/home.html", "static/tpl/login.html"))
 
 type Page struct {
-	UserName string
+	Title string
+}
+
+//Display the named template
+func display(w http.ResponseWriter, tmpl string, data interface{}) {
+	templates.ExecuteTemplate(w, tmpl, data)
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
@@ -35,15 +42,11 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	// Save it.
 	session.Save(r, w)
 
-	p := &Page{"ggobbe"}
-
-	t, err := template.ParseFiles("static/tpl/home.html")
-	checkError(err)
-	t.Execute(w, p)
+	display(w, "home", &Page{Title: "Home"})
 }
 
-func registerHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Register")
+func loginHandler(w http.ResponseWriter, r *http.Request) {
+	display(w, "login", &Page{Title: "Login"})
 }
 
 func profileHandler(w http.ResponseWriter, r *http.Request) {

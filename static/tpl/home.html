@@ -1,1 +1,8 @@
-<h1>Hi {{.UserName}}</h1>
+{{define "home"}}
+{{template "header" .}}
+<div class="content">
+    <h2>{{.Title}}</h2>
+    <div>This is the Home page</div>
+</div>
+{{template "footer" .}}
+{{end}}
