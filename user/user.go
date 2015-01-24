@@ -12,37 +12,45 @@ import (
 
 var store = sessions.NewCookieStore([]byte("gomeet-for-gopher-gala-by-gg-and-mk"))
 
+// User type
 type User struct {
 	Name      string
 	Location  Location
-	Interests UserInterests
+	Interests Interests
 }
 
+// Location type
 type Location struct {
 	Longitute float64
 	Latitude  float64
 }
 
-type UserInterests []*Interest
+// Interests type
+type Interests []*Interest
 
+// Interest type
 type Interest struct {
 	Name   string
 	Rating float64
 }
 
-type UserRepository interface {
+// Repository type
+type Repository interface {
 	GetUsers() ([]User, error)
 }
 
-func NewUser(name string, interests UserInterests) *User {
+// NewUser creates a new user
+func NewUser(name string, interests Interests) *User {
 	return &User{Name: name, Interests: interests}
 }
 
+// NewInterest creates a new interest
 func NewInterest(name string, rating float64) *Interest {
 	return &Interest{Name: name, Rating: rating}
 }
 
-func (ui UserInterests) AsMap() map[interface{}]float64 {
+// AsMap creates a map from the users interests
+func (ui Interests) AsMap() map[interface{}]float64 {
 	interestMap := make(map[interface{}]float64)
 
 	for _, i := range ui {
@@ -51,6 +59,7 @@ func (ui UserInterests) AsMap() map[interface{}]float64 {
 	return interestMap
 }
 
+// GetSessionUser gets the user stored in the session if there is one
 func GetSessionUser(w http.ResponseWriter, r *http.Request) (*User, error) {
 	session, err := store.Get(r, "user-session")
 	common.CheckError(err)
@@ -63,6 +72,7 @@ func GetSessionUser(w http.ResponseWriter, r *http.Request) (*User, error) {
 	return user, nil
 }
 
+// SetSessionUser sets the user in the session
 func SetSessionUser(w http.ResponseWriter, r *http.Request) error {
 	session, err := store.Get(r, "user-session")
 	common.CheckError(err)
@@ -74,6 +84,7 @@ func SetSessionUser(w http.ResponseWriter, r *http.Request) error {
 	return session.Save(r, w)
 }
 
+// LogOutSessionUser logs out the user
 func LogOutSessionUser(w http.ResponseWriter, r *http.Request) error {
 	session, err := store.Get(r, "user-session")
 	common.CheckError(err)

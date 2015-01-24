@@ -28,7 +28,6 @@ type Page struct {
 	User  *user.User
 }
 
-//Display the named template
 func display(w http.ResponseWriter, tmpl string, data interface{}) {
 	templates.ExecuteTemplate(w, tmpl, data)
 }
