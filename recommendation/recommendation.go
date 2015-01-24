@@ -1,7 +1,7 @@
 package recommendation
 
 import (
-	"gomeet/user"
+	"edigophers/user"
 	"log"
 
 	"github.com/muesli/regommend"

@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strings"
 
-	"gomeet/common"
+	"edigophers/common"
 
 	"github.com/gorilla/sessions"
 )

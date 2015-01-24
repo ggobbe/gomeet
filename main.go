@@ -1,9 +1,9 @@
 package main
 
 import (
+	"edigophers/common"
+	"edigophers/user"
 	"fmt"
-	"gomeet/common"
-	"gomeet/user"
 	"html/template"
 	"log"
 	"net/http"
@@ -16,6 +16,7 @@ func main() {
 	r.HandleFunc("/", homeHandler)
 	r.HandleFunc("/login", loginGetHandler).Methods("GET")
 	r.HandleFunc("/login", loginPostHandler).Methods("POST")
+	r.HandleFunc("/list", listHandler)
 	r.HandleFunc("/logout", logoutHandler)
 	r.HandleFunc("/profile/{username}", profileHandler)
 	r.HandleFunc("/profile", profileHandler)
@@ -61,6 +62,10 @@ func loginPostHandler(w http.ResponseWriter, r *http.Request) {
 func logoutHandler(w http.ResponseWriter, r *http.Request) {
 	common.CheckError(user.LogOutSessionUser(w, r))
 	http.Redirect(w, r, "/login", http.StatusFound)
+}
+
+func listHandler(w http.ResponseWriter, r *http.Request) {
+	display(w, "login", &page{Title: "Login"})
 }
 
 func profileHandler(w http.ResponseWriter, r *http.Request) {
