@@ -39,10 +39,11 @@ type Interest struct {
 type Repository interface {
 	GetUsers() ([]User, error)
 	GetUser(name string) (User, error)
+	SaveUser(usr User) error
 }
 
 //GetRepo is a FileRepo factory
-func GetRepo() *FileRepo {
+func GetRepo() (*FileRepo, error) {
 	return NewRepo("data/users.json")
 }
 
@@ -75,7 +76,9 @@ func GetSessionUser(w http.ResponseWriter, r *http.Request) (*User, error) {
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return nil, errors.New("No user in the session")
 	}
-	fileRepo := GetRepo()
+	fileRepo, err := GetRepo()
+	utils.CheckErrorMsg(err, "Failed to create repository")
+
 	user, err := fileRepo.GetUser(username.(string))
 	if err != nil {
 		if err := LogOutSessionUser(w, r); err != nil {

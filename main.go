@@ -72,7 +72,8 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	userRepo := user.GetRepo()
+	userRepo, err := user.GetRepo()
+	utils.CheckErrorMsg(err, "Failed to create repo")
 	users, err := userRepo.GetUsers()
 	if err != nil {
 		return
@@ -85,7 +86,9 @@ func profileHandler(w http.ResponseWriter, r *http.Request) {
 	// Display the profile of somebody else
 	vars := mux.Vars(r)
 	if username, ok := vars["username"]; ok {
-		userRepo := user.GetRepo()
+
+		userRepo, err := user.GetRepo()
+		utils.CheckErrorMsg(err, "Failed to create repo")
 		user, err := userRepo.GetUser(username)
 
 		if err != nil {

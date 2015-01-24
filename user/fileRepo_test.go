@@ -1,8 +1,10 @@
 package user
 
 import (
+	"edigophers/utils"
 	"encoding/json"
 	"log"
+	"os"
 	"testing"
 )
 
@@ -21,7 +23,8 @@ func TestUnMarshalUserArray(t *testing.T) {
 }
 
 func TestCanReadUserDataFromFile(t *testing.T) {
-	repo := NewRepo("../data/users.json")
+	repo, err := NewRepo("../data/users.json")
+	verifyRepoCreated(t, err)
 	users, err := repo.GetUsers()
 
 	if err != nil {
@@ -53,5 +56,103 @@ func TestCanSerializeToJson(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+}
 
+func verifyRepoCreated(t *testing.T, err error) {
+	if err != nil {
+		t.Error("Failed to create repostory!", err)
+	}
+}
+
+func createTestUser() *User {
+	return &User{
+		Name:     "Test",
+		Location: Location{Latitude: 10, Longitude: -10},
+		Interests: Interests{
+			Interest{Name: "Board games", Rating: 6}}}
+}
+
+func TestCanSaveNewUser(t *testing.T) {
+
+	fileName := "test/users.json"
+	f, err := os.Create(fileName)
+	if err != nil {
+		t.Error(err)
+	}
+	defer os.Remove(fileName)
+	defer f.Close()
+
+	usr := createTestUser()
+	repo, err := NewRepo(fileName)
+	verifyRepoCreated(t, err)
+
+	err = repo.SaveUser(*usr)
+	if err != nil {
+		t.Error(err)
+	}
+
+	repo, err = NewRepo(fileName)
+	utils.CheckErrorMsg(err, "Failed to create repository")
+	repoUsr, err := repo.GetUser(usr.Name)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if loc := repoUsr.Location; loc.Longitude == 0 {
+		t.Errorf("Repo user location is empty: (%v) user: (%v) Expected: (%v)", loc, repoUsr, usr.Location)
+	}
+
+	if interests := repoUsr.Interests; len(interests) == 0 || interests[0].Name != usr.Interests[0].Name {
+		t.Errorf("Repo user interest is empty: (%v) user: (%v) Expected: (%v)", interests, repoUsr, usr.Interests[0].Name)
+	}
+
+}
+
+func TestEditSaveNewUser(t *testing.T) {
+	fileName := "test/users2.json"
+	f, err := os.Create(fileName)
+	if err != nil {
+		t.Error(err)
+	}
+	defer os.Remove(fileName)
+	defer f.Close()
+
+	usr := createTestUser()
+
+	repo, err := NewRepo(fileName)
+	verifyRepoCreated(t, err)
+	err = repo.SaveUser(*usr)
+	if err != nil {
+		t.Error(err)
+	}
+
+	repo, err = NewRepo(fileName)
+	utils.CheckErrorMsg(err, "Failed to create repository")
+	usr, err = repo.GetUser(usr.Name)
+	if err != nil {
+		t.Error(err)
+	}
+
+	usr.Location.Latitude = 15
+	usr.Interests = append(usr.Interests, Interest{Name: "Salsa", Rating: 3})
+
+	err = repo.SaveUser(*usr)
+	if err != nil {
+		t.Error(err)
+	}
+
+	repo, err = NewRepo(fileName)
+	utils.CheckErrorMsg(err, "Failed to create repository")
+	repoUsr, err := repo.GetUser(usr.Name)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if loc := repoUsr.Location; loc.Longitude != usr.Location.Longitude {
+		t.Errorf("Repo user location is empty: (%v) user: (%v) Expected: (%v)", loc, repoUsr, usr.Location)
+	}
+
+	if interests := repoUsr.Interests; len(interests) != 2 || interests[1].Name != usr.Interests[1].Name {
+		t.Errorf("Repo user interest is empty: (%v) user: (%v) Expected: (%v)", interests, repoUsr, usr.Interests[1].Name)
+	}
 }
