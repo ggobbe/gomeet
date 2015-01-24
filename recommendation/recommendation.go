@@ -8,9 +8,14 @@ type Recommendation struct {
 }
 
 type Recommender interface {
-	GetRecommendations(user *user.User) []Recommendation
+	GetRecommendations(user *user.User) ([]Recommendation, error)
 }
 
-func GetRecommendations(user *user.User) []Recommendation {
-	return make([]Recommendation, 0)
+type SimpleRecommender struct {
+	userRepository user.UserRepository
+}
+
+func (sr SimpleRecommender) GetRecommendations(user *user.User) ([]Recommendation, error) {
+
+	return make([]Recommendation, 0), nil
 }
