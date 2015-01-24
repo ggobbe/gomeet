@@ -1,5 +1,17 @@
 package user
 
+import (
+	"errors"
+	"net/http"
+	"strings"
+
+	"gomeet/common"
+
+	"github.com/gorilla/sessions"
+)
+
+var store = sessions.NewCookieStore([]byte("gomeet-for-gopher-gala-by-gg-and-mk"))
+
 type User struct {
 	Name      string
 	Location  Location
@@ -22,7 +34,7 @@ type UserRepository interface {
 	GetUsers() ([]User, error)
 }
 
-func NewUser(name string, interests []*Interest) *User {
+func NewUser(name string, interests UserInterests) *User {
 	return &User{Name: name, Interests: interests}
 }
 
@@ -37,4 +49,34 @@ func (ui UserInterests) AsMap() map[interface{}]float64 {
 		interestMap[i.Name] = i.Rating
 	}
 	return interestMap
+}
+
+func GetSessionUser(w http.ResponseWriter, r *http.Request) (*User, error) {
+	session, err := store.Get(r, "user-session")
+	common.CheckError(err)
+	username, ok := session.Values["username"]
+	if !ok {
+		http.Redirect(w, r, "/login", http.StatusFound)
+		return nil, errors.New("No user in the session")
+	}
+	user := &User{Name: username.(string)}
+	return user, nil
+}
+
+func SetSessionUser(w http.ResponseWriter, r *http.Request) error {
+	session, err := store.Get(r, "user-session")
+	common.CheckError(err)
+	username := r.FormValue("username")
+	if strings.Trim(username, " ") == "" {
+		http.Redirect(w, r, "/login", http.StatusFound)
+	}
+	session.Values["username"] = username
+	return session.Save(r, w)
+}
+
+func LogOutSessionUser(w http.ResponseWriter, r *http.Request) error {
+	session, err := store.Get(r, "user-session")
+	common.CheckError(err)
+	delete(session.Values, "username")
+	return session.Save(r, w)
 }
