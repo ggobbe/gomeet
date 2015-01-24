@@ -1,14 +1,38 @@
 {{define "profile"}}
 {{template "header" .}}
-<div class="content">
-    <h2>{{.Title}}</h2>
-    <p>Your current location is: {{.User.Location.Longitude}}, {{.User.Location.Latitude}}</p>
-    <h3>Your interests</h3>
-    <ul>
-        {{range .User.Interests}}
-        <li>{{.Name}} ({{.Rating}})</p>
-        {{end}}
-    </ul>
+
+<h2>{{.Title}}</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>Your current location is: {{.User.Location.Longitude}}, {{.User.Location.Latitude}}</p>
+        <h3>Your interests</h3>
+        <ul>
+            {{range .User.Interests}}
+            <li>{{.Name}} ({{.Rating}})</p>
+            {{end}}
+        </ul>
+    </div>
+    <div class="col-md-6">
+        <div id="map-canvas" style="width:100%;height:300px;"></div>
+    </div>
 </div>
+
+<script type="text/javascript">
+function initialize() {
+    var latLng = { lat: {{.User.Location.Latitude}}, lng: {{.User.Location.Longitude}}};
+    var mapOptions = {
+        center: latLng,
+        zoom: 10
+    };
+    var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+    var marker = new google.maps.Marker({
+        position: latLng,
+        map: map,
+        title:"Position"
+    });
+}
+setTimeout(initialize, 500);
+</script>
+
 {{template "footer" .}}
 {{end}}

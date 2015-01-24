@@ -15,12 +15,12 @@ var store = sessions.NewCookieStore([]byte("gomeet-for-gopher-gala-by-gg-and-mk"
 
 var users = map[string]*User{
 	"ggobbe": &User{Name: "Guillaume",
-		Location: Location{Longitude: 57, Latitude: 5},
+		Location: Location{Latitude: 55.86122317, Longitude: -3.34246233},
 		Interests: Interests{
 			&Interest{Name: "Rugby", Rating: 5},
 			&Interest{Name: "Tennis", Rating: 8}}},
 	"kotulamar": &User{Name: "Martin",
-		Location: Location{Longitude: 60, Latitude: 4},
+		Location: Location{Latitude: 56.017244, Longitude: -2.8197334},
 		Interests: Interests{
 			&Interest{Name: "Skiing", Rating: 7},
 			&Interest{Name: "Cinema", Rating: 8.5},
