@@ -23,7 +23,7 @@ func main() {
 
 var templates = template.Must(template.ParseFiles("static/tpl/header.html", "static/tpl/footer.html", "static/tpl/home.html", "static/tpl/login.html"))
 
-type Page struct {
+type page struct {
 	Title string
 	User  *user.User
 }
@@ -37,11 +37,11 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	display(w, "home", &Page{Title: "Home", User: user})
+	display(w, "home", &page{Title: "Home", User: user})
 }
 
 func loginGetHandler(w http.ResponseWriter, r *http.Request) {
-	display(w, "login", &Page{Title: "Login"})
+	display(w, "login", &page{Title: "Login"})
 }
 
 func loginPostHandler(w http.ResponseWriter, r *http.Request) {
