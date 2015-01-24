@@ -1,6 +1,6 @@
 package recommendation
 
-import "os/user"
+import "gomeet/user"
 
 type Recommendation struct {
 	User  *user.User
@@ -9,4 +9,8 @@ type Recommendation struct {
 
 type Recommender interface {
 	GetRecommendations(user *user.User) []Recommendation
+}
+
+func GetRecommendations(user *user.User) []Recommendation {
+	return make([]Recommendation, 0)
 }
