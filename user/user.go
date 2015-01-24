@@ -2,6 +2,7 @@ package user
 
 import (
 	"errors"
+	"log"
 	"net/http"
 	"strings"
 
@@ -11,6 +12,15 @@ import (
 )
 
 var store = sessions.NewCookieStore([]byte("gomeet-for-gopher-gala-by-gg-and-mk"))
+
+var users = map[string]*User{
+	"ggobbe": &User{Name: "Guillaume", Interests: Interests{
+		&Interest{Name: "Rugby", Rating: 5},
+		&Interest{Name: "Tennis", Rating: 8}}},
+	"kotulamar": &User{Name: "Martin", Interests: Interests{
+		&Interest{Name: "Skiing", Rating: 7},
+		&Interest{Name: "Cinema", Rating: 8.5},
+		&Interest{Name: "Salsa", Rating: 3}}}}
 
 // User type
 type User struct {
@@ -68,9 +78,14 @@ func GetSessionUser(w http.ResponseWriter, r *http.Request) (*User, error) {
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return nil, errors.New("No user in the session")
 	}
-	user := &User{
-		Name:      username.(string),
-		Interests: Interests{&Interest{Name: "Rugby", Rating: 5}, &Interest{Name: "Tennis", Rating: 8}}}
+	user, ok := users[username.(string)]
+	if !ok {
+		if err := LogOutSessionUser(w, r); err != nil {
+			log.Fatal(err)
+		}
+		http.Redirect(w, r, "/login", http.StatusFound)
+		return nil, errors.New("This user doesn't exists")
+	}
 	return user, nil
 }
 
