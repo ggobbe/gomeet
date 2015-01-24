@@ -1,12 +1,13 @@
 package user
 
 import (
-	"edigophers/common"
+	"edigophers/utils"
 	"encoding/json"
 	"errors"
 	"io/ioutil"
 )
 
+//File base repo struct
 type FileRepo struct {
 	usersMap map[string]*User
 	users    []User
@@ -47,7 +48,7 @@ func loadFile(filepath string) ([]User, error) {
 func NewRepo(filepath string) *FileRepo {
 
 	u, err := loadFile(filepath)
-	common.CheckError(err)
+	utils.CheckError(err)
 
 	usersMap := make(map[string]*User)
 	for _, u := range u {
