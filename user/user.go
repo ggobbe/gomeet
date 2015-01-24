@@ -1,11 +1,17 @@
 package user
 
 type User struct {
-	UserName string
-	Location Location
+	UserName  string
+	Location  Location
+	Interests []Interest
 }
 
 type Location struct {
-	longitute float64
-	latitude  float64
+	Longitute float64
+	Latitude  float64
+}
+
+type Interest struct {
+	Name   string
+	Rating float64
 }

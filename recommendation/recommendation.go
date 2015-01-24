@@ -1,12 +1,12 @@
 package recommendation
 
-import "gomeet/domain"
+import "os/user"
 
 type Recommendation struct {
-	user  *user.User
-	ratio float64
+	User  *user.User
+	Ratio float64
 }
 
 type Recommender interface {
-	GetRecommendation(user *user.User) []Recommendation
+	GetRecommendations(user *user.User) []Recommendation
 }
