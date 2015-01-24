@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"gomeet/common"
 	"gomeet/user"
 	"html/template"
@@ -62,5 +61,9 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func profileHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Profile")
+	user, err := user.GetSessionUser(w, r)
+	if err != nil {
+		return
+	}
+	display(w, "profile", &page{Title: "Profile", User: user})
 }
