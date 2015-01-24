@@ -1,8 +1,8 @@
 package main
 
 import (
-	"edigophers/common"
 	"edigophers/user"
+	"edigophers/utils"
 	"fmt"
 	"html/template"
 	"log"
@@ -61,7 +61,7 @@ func loginPostHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func logoutHandler(w http.ResponseWriter, r *http.Request) {
-	common.CheckError(user.LogOutSessionUser(w, r))
+	utils.CheckError(user.LogOutSessionUser(w, r))
 	http.Redirect(w, r, "/login", http.StatusFound)
 }
 

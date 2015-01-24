@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strings"
 
-	"edigophers/common"
+	"edigophers/utils"
 
 	"github.com/gorilla/sessions"
 )
@@ -76,7 +76,7 @@ func (ui Interests) AsMap() map[interface{}]float64 {
 // GetSessionUser gets the user stored in the session if there is one
 func GetSessionUser(w http.ResponseWriter, r *http.Request) (*User, error) {
 	session, err := store.Get(r, "user-session")
-	common.CheckError(err)
+	utils.CheckError(err)
 	username, ok := session.Values["username"]
 	if !ok {
 		http.Redirect(w, r, "/login", http.StatusFound)
@@ -110,7 +110,7 @@ func GetUsers() map[string]*User {
 // SetSessionUser sets the user in the session
 func SetSessionUser(w http.ResponseWriter, r *http.Request, username string) error {
 	session, err := store.Get(r, "user-session")
-	common.CheckError(err)
+	utils.CheckError(err)
 	if strings.Trim(username, " ") == "" {
 		http.Redirect(w, r, "/login", http.StatusFound)
 	}
@@ -121,7 +121,7 @@ func SetSessionUser(w http.ResponseWriter, r *http.Request, username string) err
 // LogOutSessionUser logs out the user
 func LogOutSessionUser(w http.ResponseWriter, r *http.Request) error {
 	session, err := store.Get(r, "user-session")
-	common.CheckError(err)
+	utils.CheckError(err)
 	delete(session.Values, "username")
 	return session.Save(r, w)
 }
