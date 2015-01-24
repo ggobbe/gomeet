@@ -102,6 +102,11 @@ func GetUser(username string) (*User, error) {
 	return user, nil
 }
 
+// GetUsers returns the list of all the users
+func GetUsers() map[string]*User {
+	return users
+}
+
 // SetSessionUser sets the user in the session
 func SetSessionUser(w http.ResponseWriter, r *http.Request, username string) error {
 	session, err := store.Get(r, "user-session")

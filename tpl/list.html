@@ -1,0 +1,12 @@
+{{define "list"}}
+{{template "header" .}}
+
+<h2>{{.Title}}</h2>
+<ul>
+    {{range $key, $value := .Data}}
+    <li><a href="/profile/{{$key}}" title="View profile">{{$value.Name}}</a></li>
+    {{end}}
+</ul>
+
+{{template "footer" .}}
+{{end}}

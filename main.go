@@ -27,11 +27,12 @@ func main() {
 
 var templates = template.Must(template.ParseFiles(
 	"tpl/header.html", "tpl/footer.html",
-	"tpl/home.html", "tpl/login.html", "tpl/profile.html"))
+	"tpl/home.html", "tpl/login.html", "tpl/profile.html", "tpl/list.html"))
 
 type page struct {
 	Title string
 	User  *user.User
+	Data  interface{}
 }
 
 func display(w http.ResponseWriter, tmpl string, data interface{}) {
@@ -65,7 +66,11 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func listHandler(w http.ResponseWriter, r *http.Request) {
-	display(w, "login", &page{Title: "Login"})
+	usr, err := user.GetSessionUser(w, r)
+	if err != nil {
+		return
+	}
+	display(w, "list", &page{Title: "List of users", User: usr, Data: user.GetUsers()})
 }
 
 func profileHandler(w http.ResponseWriter, r *http.Request) {
