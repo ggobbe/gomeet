@@ -15,7 +15,7 @@ func main() {
 	r.HandleFunc("/", homeHandler)
 	r.HandleFunc("/login", loginGetHandler).Methods("GET")
 	r.HandleFunc("/login", loginPostHandler).Methods("POST")
-	r.HandleFunc("/logout", logoutHandler).Methods("GET")
+	r.HandleFunc("/logout", logoutHandler)
 	r.HandleFunc("/profile", profileHandler)
 	http.Handle("/", r)
 	http.ListenAndServe(":8080", nil)
