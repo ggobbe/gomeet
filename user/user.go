@@ -82,13 +82,22 @@ func GetSessionUser(w http.ResponseWriter, r *http.Request) (*User, error) {
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return nil, errors.New("No user in the session")
 	}
-	user, ok := users[username.(string)]
-	if !ok {
+	user, err := GetUser(username.(string))
+	if err != nil {
 		if err := LogOutSessionUser(w, r); err != nil {
 			log.Fatal(err)
 		}
 		http.Redirect(w, r, "/login", http.StatusFound)
-		return nil, errors.New("This user doesn't exists")
+		return nil, err
+	}
+	return user, nil
+}
+
+// GetUser gets a user per his username
+func GetUser(username string) (*User, error) {
+	user, ok := users[username]
+	if !ok {
+		return nil, errors.New("User doesn't exists")
 	}
 	return user, nil
 }

@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"gomeet/common"
 	"gomeet/user"
 	"html/template"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -15,6 +17,7 @@ func main() {
 	r.HandleFunc("/login", loginGetHandler).Methods("GET")
 	r.HandleFunc("/login", loginPostHandler).Methods("POST")
 	r.HandleFunc("/logout", logoutHandler)
+	r.HandleFunc("/profile/{username}", profileHandler)
 	r.HandleFunc("/profile", profileHandler)
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 	http.Handle("/", r)
@@ -61,9 +64,22 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func profileHandler(w http.ResponseWriter, r *http.Request) {
-	user, err := user.GetSessionUser(w, r)
-	if err != nil {
+	// Display the profile of somebody else
+	vars := mux.Vars(r)
+	if username, ok := vars["username"]; ok {
+		user, err := user.GetUser(username)
+		if err != nil {
+			return
+		}
+		display(w, "profile", &page{Title: fmt.Sprintf("%s's Profile", user.Name), User: user})
 		return
 	}
-	display(w, "profile", &page{Title: "Profile", User: user})
+
+	// Display the profile of the current user
+	user, err := user.GetSessionUser(w, r)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	display(w, "profile", &page{Title: "Your Profile", User: user})
 }
