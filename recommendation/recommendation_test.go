@@ -25,7 +25,7 @@ func TestHandleEmptyUserRepository(t *testing.T) {
 
 func TestHandleSimpleRecommendation(t *testing.T) {
 
-	repoMock := make([]user.User, 2)
+	repoMock := make([]user.User, 4)
 
 	userInt := make([]*user.Interest, 3)
 	userInt[0] = user.NewInterest("jogging", 9.0)
@@ -40,6 +40,20 @@ func TestHandleSimpleRecommendation(t *testing.T) {
 	userInt[2] = user.NewInterest("italian", 0.1)
 
 	repoMock[1] = *user.NewUser("John", userInt)
+
+	userInt = make([]*user.Interest, 3)
+	userInt[0] = user.NewInterest("jogging", 0.0)
+	userInt[1] = user.NewInterest("cinema", 0.0)
+	userInt[2] = user.NewInterest("italian", 0.0)
+
+	repoMock[2] = *user.NewUser("Simon", userInt)
+
+	userInt = make([]*user.Interest, 3)
+	userInt[0] = user.NewInterest("jogging", 5.0)
+	userInt[1] = user.NewInterest("cinema", 0.0)
+	userInt[2] = user.NewInterest("italian", 0.0)
+
+	repoMock[3] = *user.NewUser("George", userInt)
 
 	userInt = make([]*user.Interest, 3)
 	userInt[0] = user.NewInterest("jogging", 8.0)
@@ -61,8 +75,9 @@ func TestHandleSimpleRecommendation(t *testing.T) {
 		t.FailNow()
 	}
 
-	if bestMatch := reco[0]; bestMatch.User.Name != "Mark" {
-		t.Errorf("Expected(%q), got (%q)", repoMock[1].Name, bestMatch.User.Name)
+	t.Log("best match:", reco[0], " user ")
+	if bestMatch := reco[0]; bestMatch.User.Name != repoMock[3].Name {
+		t.Errorf("Expected(%q), got (%q)", repoMock[3].Name, bestMatch.User.Name)
 
 	}
 }
