@@ -7,23 +7,10 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
-
-func main() {
-	r := mux.NewRouter()
-	r.HandleFunc("/", homeHandler)
-	r.HandleFunc("/login", loginGetHandler).Methods("GET")
-	r.HandleFunc("/login", loginPostHandler).Methods("POST")
-	r.HandleFunc("/list", listHandler)
-	r.HandleFunc("/logout", logoutHandler)
-	r.HandleFunc("/profile/{username}", profileHandler)
-	r.HandleFunc("/profile", profileHandler)
-	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
-	http.Handle("/", r)
-	http.ListenAndServe(":8080", nil)
-}
 
 var templates = template.Must(template.ParseFiles(
 	"tpl/header.html", "tpl/footer.html",
@@ -33,6 +20,21 @@ type page struct {
 	Title string
 	User  *user.User
 	Data  interface{}
+}
+
+func main() {
+	r := mux.NewRouter()
+	r.HandleFunc("/", homeHandler)
+	r.HandleFunc("/login", loginGetHandler).Methods("GET")
+	r.HandleFunc("/login", loginPostHandler).Methods("POST")
+	r.HandleFunc("/list", listHandler)
+	r.HandleFunc("/logout", logoutHandler)
+	r.HandleFunc("/interest/add", interestAddHandler).Methods("POST")
+	r.HandleFunc("/profile/{username}", profileHandler)
+	r.HandleFunc("/profile", profileHandler)
+	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
+	http.Handle("/", r)
+	http.ListenAndServe(":8080", nil)
 }
 
 func display(w http.ResponseWriter, tmpl string, data interface{}) {
@@ -100,4 +102,17 @@ func profileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	display(w, "profile", &page{Title: "Your Profile", User: user})
+}
+
+func interestAddHandler(w http.ResponseWriter, r *http.Request) {
+	name := r.FormValue("name")
+	rating, err := strconv.ParseFloat(r.FormValue("rating"), 64)
+	utils.CheckError(err)
+	usr, err := user.GetSessionUser(w, r)
+	if err != nil {
+		return
+	}
+	interest := user.NewInterest(name, rating)
+	usr.Interests = append(usr.Interests, *interest)
+	http.Redirect(w, r, "/profile", http.StatusFound)
 }
