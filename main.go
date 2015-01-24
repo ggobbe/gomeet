@@ -17,11 +17,14 @@ func main() {
 	r.HandleFunc("/login", loginPostHandler).Methods("POST")
 	r.HandleFunc("/logout", logoutHandler)
 	r.HandleFunc("/profile", profileHandler)
+	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 	http.Handle("/", r)
 	http.ListenAndServe(":8080", nil)
 }
 
-var templates = template.Must(template.ParseFiles("static/tpl/header.html", "static/tpl/footer.html", "static/tpl/home.html", "static/tpl/login.html"))
+var templates = template.Must(template.ParseFiles(
+	"tpl/header.html", "tpl/footer.html",
+	"tpl/home.html", "tpl/login.html", "tpl/profile.html"))
 
 type page struct {
 	Title string
