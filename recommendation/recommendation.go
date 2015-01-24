@@ -12,10 +12,12 @@ type Recommender interface {
 }
 
 type SimpleRecommender struct {
-	userRepository user.UserRepository
+	uRepo user.UserRepository
 }
 
 func (sr SimpleRecommender) GetRecommendations(user *user.User) ([]Recommendation, error) {
+
+	// := sr.uRepo.GetUsers()
 
 	return make([]Recommendation, 0), nil
 }

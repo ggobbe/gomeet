@@ -1,9 +1,9 @@
 package user
 
 type User struct {
-	UserName  string
+	Name      string
 	Location  Location
-	Interests []Interest
+	Interests []*Interest
 }
 
 type Location struct {
@@ -16,6 +16,14 @@ type Interest struct {
 	Rating float64
 }
 
-func Login(username string) {
+type UserRepository interface {
+	GetUsers() ([]User, error)
+}
 
+func NewUser(name string, interests []*Interest) *User {
+	return &User{Name: name, Interests: interests}
+}
+
+func NewInterest(name string, rating float64) *Interest {
+	return &Interest{Name: name, Rating: rating}
 }
