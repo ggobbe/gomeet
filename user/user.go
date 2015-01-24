@@ -73,10 +73,9 @@ func GetSessionUser(w http.ResponseWriter, r *http.Request) (*User, error) {
 }
 
 // SetSessionUser sets the user in the session
-func SetSessionUser(w http.ResponseWriter, r *http.Request) error {
+func SetSessionUser(w http.ResponseWriter, r *http.Request, username string) error {
 	session, err := store.Get(r, "user-session")
 	common.CheckError(err)
-	username := r.FormValue("username")
 	if strings.Trim(username, " ") == "" {
 		http.Redirect(w, r, "/login", http.StatusFound)
 	}

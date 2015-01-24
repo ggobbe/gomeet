@@ -45,7 +45,8 @@ func loginGetHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func loginPostHandler(w http.ResponseWriter, r *http.Request) {
-	if user.SetSessionUser(w, r) != nil {
+	username := r.FormValue("username")
+	if user.SetSessionUser(w, r, username) != nil {
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
