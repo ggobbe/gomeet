@@ -14,13 +14,17 @@ import (
 var store = sessions.NewCookieStore([]byte("gomeet-for-gopher-gala-by-gg-and-mk"))
 
 var users = map[string]*User{
-	"ggobbe": &User{Name: "Guillaume", Interests: Interests{
-		&Interest{Name: "Rugby", Rating: 5},
-		&Interest{Name: "Tennis", Rating: 8}}},
-	"kotulamar": &User{Name: "Martin", Interests: Interests{
-		&Interest{Name: "Skiing", Rating: 7},
-		&Interest{Name: "Cinema", Rating: 8.5},
-		&Interest{Name: "Salsa", Rating: 3}}}}
+	"ggobbe": &User{Name: "Guillaume",
+		Location: Location{Longitude: 57, Latitude: 5},
+		Interests: Interests{
+			&Interest{Name: "Rugby", Rating: 5},
+			&Interest{Name: "Tennis", Rating: 8}}},
+	"kotulamar": &User{Name: "Martin",
+		Location: Location{Longitude: 60, Latitude: 4},
+		Interests: Interests{
+			&Interest{Name: "Skiing", Rating: 7},
+			&Interest{Name: "Cinema", Rating: 8.5},
+			&Interest{Name: "Salsa", Rating: 3}}}}
 
 // User type
 type User struct {
@@ -31,7 +35,7 @@ type User struct {
 
 // Location type
 type Location struct {
-	Longitute float64
+	Longitude float64
 	Latitude  float64
 }
 
