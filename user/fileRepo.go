@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 )
 
-//File base repo struct
+//FileRepo is a file based user repository
 type FileRepo struct {
 	usersMap map[string]*User
 	users    []User
@@ -45,14 +45,17 @@ func loadFile(filepath string) ([]User, error) {
 	return usersJSON, nil
 }
 
+//NewRepo creates a new File base repository
 func NewRepo(filepath string) *FileRepo {
 
 	u, err := loadFile(filepath)
 	utils.CheckError(err)
 
 	usersMap := make(map[string]*User)
-	for _, u := range u {
-		usersMap[u.Name] = &u
+	for _, usr := range u {
+		localUsr := usr //iteration variable usr is reused in the loop
+		usersMap[localUsr.Name] = &localUsr
 	}
+
 	return &FileRepo{users: u, usersMap: usersMap}
 }
