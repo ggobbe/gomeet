@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"gomeet/user"
 	"html/template"
 	"log"
 	"net/http"
@@ -16,6 +17,7 @@ func main() {
 	r.HandleFunc("/", homeHandler)
 	r.HandleFunc("/login", loginGetHandler).Methods("GET")
 	r.HandleFunc("/login", loginPostHandler).Methods("POST")
+	r.HandleFunc("/logout", logoutHandler).Methods("GET")
 	r.HandleFunc("/profile", profileHandler)
 	http.Handle("/", r)
 	http.ListenAndServe(":8080", nil)
@@ -27,6 +29,7 @@ var templates = template.Must(template.ParseFiles("static/tpl/header.html", "sta
 
 type Page struct {
 	Title string
+	User  *user.User
 }
 
 //Display the named template
@@ -37,12 +40,13 @@ func display(w http.ResponseWriter, tmpl string, data interface{}) {
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	session, err := store.Get(r, "user-session")
 	checkError(err)
-	_, ok := session.Values["username"]
+	username, ok := session.Values["username"]
 	if !ok {
 		http.Redirect(w, r, "/login", http.StatusFound)
+		return
 	}
-
-	display(w, "home", &Page{Title: "Home "})
+	user := &user.User{Name: username.(string)}
+	display(w, "home", &Page{Title: "Home", User: user})
 }
 
 func loginGetHandler(w http.ResponseWriter, r *http.Request) {
@@ -60,6 +64,14 @@ func loginPostHandler(w http.ResponseWriter, r *http.Request) {
 	session.Save(r, w)
 	fmt.Printf("Username %s is logged", username)
 	http.Redirect(w, r, "/", http.StatusFound)
+}
+
+func logoutHandler(w http.ResponseWriter, r *http.Request) {
+	session, err := store.Get(r, "user-session")
+	checkError(err)
+	delete(session.Values, "username")
+	session.Save(r, w)
+	http.Redirect(w, r, "/login", http.StatusFound)
 }
 
 func profileHandler(w http.ResponseWriter, r *http.Request) {
