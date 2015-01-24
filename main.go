@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
@@ -13,7 +14,8 @@ import (
 func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/", homeHandler)
-	r.HandleFunc("/login", loginHandler)
+	r.HandleFunc("/login", loginGetHandler).Methods("GET")
+	r.HandleFunc("/login", loginPostHandler).Methods("POST")
 	r.HandleFunc("/profile", profileHandler)
 	http.Handle("/", r)
 	http.ListenAndServe(":8080", nil)
@@ -33,20 +35,31 @@ func display(w http.ResponseWriter, tmpl string, data interface{}) {
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-	// Get a session. We're ignoring the error resulted from decoding an
-	// existing session: Get() always returns a session, even if empty.
-	session, _ := store.Get(r, "session-name")
-	// Set some session values.
-	session.Values["foo"] = "bar"
-	session.Values[42] = 43
-	// Save it.
-	session.Save(r, w)
+	session, err := store.Get(r, "user-session")
+	checkError(err)
+	_, ok := session.Values["username"]
+	if !ok {
+		http.Redirect(w, r, "/login", http.StatusFound)
+	}
 
-	display(w, "home", &Page{Title: "Home"})
+	display(w, "home", &Page{Title: "Home "})
 }
 
-func loginHandler(w http.ResponseWriter, r *http.Request) {
+func loginGetHandler(w http.ResponseWriter, r *http.Request) {
 	display(w, "login", &Page{Title: "Login"})
+}
+
+func loginPostHandler(w http.ResponseWriter, r *http.Request) {
+	session, err := store.Get(r, "user-session")
+	checkError(err)
+	username := r.FormValue("username")
+	if strings.Trim(username, " ") == "" {
+		http.Redirect(w, r, "/login", http.StatusFound)
+	}
+	session.Values["username"] = username
+	session.Save(r, w)
+	fmt.Printf("Username %s is logged", username)
+	http.Redirect(w, r, "/", http.StatusFound)
 }
 
 func profileHandler(w http.ResponseWriter, r *http.Request) {

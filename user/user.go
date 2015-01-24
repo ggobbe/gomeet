@@ -15,3 +15,7 @@ type Interest struct {
 	Name   string
 	Rating float64
 }
+
+func Login(username string) {
+
+}
