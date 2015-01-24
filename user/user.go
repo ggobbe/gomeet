@@ -68,7 +68,9 @@ func GetSessionUser(w http.ResponseWriter, r *http.Request) (*User, error) {
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return nil, errors.New("No user in the session")
 	}
-	user := &User{Name: username.(string)}
+	user := &User{
+		Name:      username.(string),
+		Interests: Interests{&Interest{Name: "Rugby", Rating: 5}, &Interest{Name: "Tennis", Rating: 8}}}
 	return user, nil
 }
 
