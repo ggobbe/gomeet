@@ -70,14 +70,22 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	display(w, "list", &page{Title: "List of users", User: usr, Data: user.GetUsers()})
+	userRepo := user.GetRepo()
+	users, err := userRepo.GetUsers()
+	if err != nil {
+		return
+	}
+
+	display(w, "list", &page{Title: "List of users", User: usr, Data: users})
 }
 
 func profileHandler(w http.ResponseWriter, r *http.Request) {
 	// Display the profile of somebody else
 	vars := mux.Vars(r)
 	if username, ok := vars["username"]; ok {
-		user, err := user.GetUser(username)
+		userRepo := user.GetRepo()
+		user, err := userRepo.GetUser(username)
+
 		if err != nil {
 			return
 		}

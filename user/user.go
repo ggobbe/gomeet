@@ -13,19 +13,6 @@ import (
 
 var store = sessions.NewCookieStore([]byte("gomeet-for-gopher-gala-by-gg-and-mk"))
 
-var users = map[string]*User{
-	"ggobbe": &User{Name: "Guillaume",
-		Location: Location{Latitude: 55.86122317, Longitude: -3.34246233},
-		Interests: Interests{
-			&Interest{Name: "Rugby", Rating: 5},
-			&Interest{Name: "Tennis", Rating: 8}}},
-	"kotulamar": &User{Name: "Martin",
-		Location: Location{Latitude: 56.017244, Longitude: -2.8197334},
-		Interests: Interests{
-			&Interest{Name: "Skiing", Rating: 7},
-			&Interest{Name: "Cinema", Rating: 8.5},
-			&Interest{Name: "Salsa", Rating: 3}}}}
-
 // User type
 type User struct {
 	Name      string
@@ -40,7 +27,7 @@ type Location struct {
 }
 
 // Interests type
-type Interests []*Interest
+type Interests []Interest
 
 // Interest type
 type Interest struct {
@@ -51,6 +38,12 @@ type Interest struct {
 // Repository type
 type Repository interface {
 	GetUsers() ([]User, error)
+	GetUser(name string) (User, error)
+}
+
+//GetRepo is a FileRepo factory
+func GetRepo() *FileRepo {
+	return NewRepo("data/users.json")
 }
 
 // NewUser creates a new user
@@ -82,7 +75,8 @@ func GetSessionUser(w http.ResponseWriter, r *http.Request) (*User, error) {
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return nil, errors.New("No user in the session")
 	}
-	user, err := GetUser(username.(string))
+	fileRepo := GetRepo()
+	user, err := fileRepo.GetUser(username.(string))
 	if err != nil {
 		if err := LogOutSessionUser(w, r); err != nil {
 			log.Fatal(err)
@@ -91,20 +85,6 @@ func GetSessionUser(w http.ResponseWriter, r *http.Request) (*User, error) {
 		return nil, err
 	}
 	return user, nil
-}
-
-// GetUser gets a user per his username
-func GetUser(username string) (*User, error) {
-	user, ok := users[username]
-	if !ok {
-		return nil, errors.New("User doesn't exists")
-	}
-	return user, nil
-}
-
-// GetUsers returns the list of all the users
-func GetUsers() map[string]*User {
-	return users
 }
 
 // SetSessionUser sets the user in the session
