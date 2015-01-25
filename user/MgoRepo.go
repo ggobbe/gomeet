@@ -16,15 +16,17 @@ type MgoRepo struct {
 
 const collection = "users"
 
-func (r MgoRepo) getUserCollection() *mgo.Collection {
+func (r MgoRepo) getSession() *mgo.Session {
 	s, err := mgo.Dial(r.url)
 	utils.CheckError(err)
-	return s.DB(r.database).C(r.collection)
+	return s
 }
 
 // GetUser gets a user per his username
 func (r MgoRepo) GetUser(name string) (*User, error) {
-	c := r.getUserCollection()
+	s := r.getSession()
+	defer s.Close()
+	c := s.DB(r.database).C(r.collection)
 	user := User{}
 	err := c.Find(bson.M{"name": name}).One(&user)
 	if err != nil {
@@ -35,7 +37,9 @@ func (r MgoRepo) GetUser(name string) (*User, error) {
 
 //GetUsers is a function returning a list of users
 func (r MgoRepo) GetUsers() ([]User, error) {
-	c := r.getUserCollection()
+	s := r.getSession()
+	defer s.Close()
+	c := s.DB(r.database).C(r.collection)
 	users := []User{}
 	err := c.Find(nil).All(&users)
 	if err != nil {
@@ -46,7 +50,9 @@ func (r MgoRepo) GetUsers() ([]User, error) {
 
 // SaveUser saves a user to the database
 func (r MgoRepo) SaveUser(usr User) error {
-	c := r.getUserCollection()
+	s := r.getSession()
+	defer s.Close()
+	c := s.DB(r.database).C(r.collection)
 	return c.Insert(usr)
 }
 
