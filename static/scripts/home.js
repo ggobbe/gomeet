@@ -13,7 +13,7 @@ $(function() {
       position: user.location,
       map: map,
       title:user.name,
-      icon: 'images/markers/darkGreen_MarkerA.png'
+      icon: 'images/markers/darkgreen_MarkerA.png'
     });
 
     // Add the circle for this city to the map.
