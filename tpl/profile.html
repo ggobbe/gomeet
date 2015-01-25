@@ -8,12 +8,12 @@
         <h3>Your interests</h3>
         <form action="/interest/add" method="POST">
             <p><input type="text" name="interest" class="form-control" placeholder="Interest" /></p>
-            <div class="row spacer-down-xs">
+            <div class="row">
                 <div class="col-md-6">
-                    <input type="number" name="rating" class="form-control" placeholder="Rating" />
+                    <p><input type="number" name="rating" class="form-control" placeholder="Rating" /></p>
                 </div>
                 <div class="col-md-6">
-                    <input type="submit" name="add-interest" class="btn btn-primary full-width" value="Add" />
+                    <p><input type="submit" name="add-interest" class="btn btn-primary full-width" value="Add" /></p>
                 </div>
             </div>
             {{template "helpers/interests" .User.Interests}}
