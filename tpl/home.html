@@ -1,7 +1,14 @@
 {{define "home"}}
 {{template "header" .}}
 <script type="text/javascript">
-  var points = [];
+  var users = [];
+  var user = {
+    name : {{.User.Name}},
+    location: {
+      lat : {{.User.Location.Latitude}},
+      lng: {{.User.Location.Longitude}}
+    }
+  }
 </script>
 
 <h2>Welcome {{.User.Name}}</h2>
@@ -15,7 +22,14 @@
   {{range .Data}}
   <div class="col-md-3">
     <script type="text/javascript">
-      points.push({lat : {{.User.Location.Latitude}}, lng: {{.User.Location.Longitude}}});
+      users.push({
+        name : {{.User.Name}},
+         location : {
+            lat : {{.User.Location.Latitude}},
+            lng: {{.User.Location.Longitude}}
+          }
+      });
+
     </script>
     <h3>{{.User.Name}}</h3>
     <p></p>
@@ -30,20 +44,35 @@
 </div>
 
   <script type="text/javascript">
-  // function initialize() {
-  //   var latLng = { lat: {{.User.Location.Latitude}}, lng: {{.User.Location.Longitude}}};
-  //   var mapOptions = {
-  //     center: latLng,
-  //     zoom: 10
-  //   };
-  //   var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-  //   var marker = new google.maps.Marker({
-  //     position: latLng,
-  //     map: map,
-  //     title:"Position"
-  //   });
-  // }
-  // setTimeout(initialize, 500);
+
+  $(function() {
+    function initialize() {
+
+      var mapOptions = {
+        center: user.location,
+        zoom: 10
+      };
+
+      var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+      var marker = new google.maps.Marker({
+        position: user.location,
+        map: map,
+        title:"User position",
+        image: "images/beachflag.png"
+      });
+
+      $.each(users, function(index, user){
+        var marker = new google.maps.Marker({
+          position: user.location,
+          map: map,
+          title: user.name
+        });
+      });
+    };
+
+    initialize();
+  })
+
   </script>
 
 {{template "footer" .}}
