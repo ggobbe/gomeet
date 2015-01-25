@@ -94,12 +94,10 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-
 	users, err := repository.GetUsers()
 	if err != nil {
 		return
 	}
-
 	display(w, "list", &page{Title: "List of users", User: usr, Data: users})
 }
 
@@ -115,7 +113,6 @@ func profileHandler(w http.ResponseWriter, r *http.Request) {
 		display(w, "profile", &page{Title: fmt.Sprintf("%s's Profile", user.Name), User: user})
 		return
 	}
-
 	// Display the profile of the current user
 	user, err := user.GetSessionUser(w, r, repository, store)
 	utils.CheckError(err)
@@ -132,8 +129,6 @@ func interestAddHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	interest := user.NewInterest(name, rating)
 	usr.Interests = append(usr.Interests, *interest)
-
-	err = repository.SaveUser(*usr)
-
+	utils.CheckError(repository.SaveUser(*usr))
 	http.Redirect(w, r, "/profile", http.StatusFound)
 }

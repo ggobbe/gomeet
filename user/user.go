@@ -9,11 +9,12 @@ import (
 	"edigophers/utils"
 
 	"github.com/gorilla/sessions"
+	"gopkg.in/mgo.v2/bson"
 )
 
 // User type
 type User struct {
-	ID        string `bson:"_id,omitempty"`
+	ID        bson.ObjectId `bson:"_id,omitempty"`
 	Name      string
 	Location  Location
 	Interests Interests
@@ -54,7 +55,6 @@ func NewInterest(name string, rating float64) *Interest {
 // AsMap creates a map from the users interests
 func (ui Interests) AsMap() map[interface{}]float64 {
 	interestMap := make(map[interface{}]float64)
-
 	for _, i := range ui {
 		interestMap[i.Name] = i.Rating
 	}
@@ -70,7 +70,6 @@ func GetSessionUser(w http.ResponseWriter, r *http.Request, repo Repository, sto
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return nil, errors.New("No user in the session")
 	}
-
 	user, err := repo.GetUser(username.(string))
 	if err != nil {
 		if err := LogOutSessionUser(w, r, store); err != nil {
