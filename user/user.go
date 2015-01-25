@@ -13,6 +13,7 @@ import (
 
 // User type
 type User struct {
+	Id        string `bson:"_id,omitempty"`
 	Name      string
 	Location  Location
 	Interests Interests

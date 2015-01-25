@@ -11,6 +11,13 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
+	"gopkg.in/mgo.v2"
+)
+
+const (
+	mgoURL = "localhost"
+	mgoDb  = "gomeet"
+	userC  = "users"
 )
 
 var templates = template.Must(template.ParseFiles(
@@ -24,6 +31,12 @@ type page struct {
 	Title string
 	User  *user.User
 	Data  interface{}
+}
+
+func getUserCollection() *mgo.Collection {
+	s, err := mgo.Dial(mgoURL)
+	utils.CheckError(err)
+	return s.DB(mgoDb).C(userC)
 }
 
 func main() {
