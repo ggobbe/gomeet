@@ -32,8 +32,8 @@
 
     </script>
     <h3>{{.User.Name}}</h3>
-    <p></p>
-    <h3>His interests</h3>
+    <a href="#" id="usr-zoom-{{.User.Name}}">Zoom</a>
+    <h3>Interests</h3>
     <ul>
       {{range .User.Interests}}
         <li>{{.Name}} ({{.Rating}})</p>
@@ -43,37 +43,6 @@
   {{end}}
 </div>
 
-  <script type="text/javascript">
-
-  $(function() {
-    function initialize() {
-
-      var mapOptions = {
-        center: user.location,
-        zoom: 10
-      };
-
-      var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-      var marker = new google.maps.Marker({
-        position: user.location,
-        map: map,
-        title:"User position",
-        image: "images/beachflag.png"
-      });
-
-      $.each(users, function(index, user){
-        var marker = new google.maps.Marker({
-          position: user.location,
-          map: map,
-          title: user.name
-        });
-      });
-    };
-
-    initialize();
-  })
-
-  </script>
-
+<script src="scripts/home.js"></script>
 {{template "footer" .}}
 {{end}}
