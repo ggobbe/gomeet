@@ -12,7 +12,8 @@ $(function() {
     var marker = new google.maps.Marker({
       position: user.location,
       map: map,
-      title:user.name
+      title:user.name,
+      icon: 'images/markers/darkGreen_MarkerA.png'
     });
 
     var removeAnimation = $.noop
