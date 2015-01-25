@@ -53,7 +53,7 @@ func (r MgoRepo) SaveUser(usr User) error {
 	s := r.getSession()
 	defer s.Close()
 	c := s.DB(r.database).C(r.collection)
-	return c.Insert(usr)
+	return c.UpdateId(usr.ID, usr)
 }
 
 // NewMgoRepo creates a new Mongo database repository
