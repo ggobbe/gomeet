@@ -21,7 +21,6 @@ type User struct {
 
 // Location type
 type Location struct {
-	Id        string `bson:"_id,omitempty"`
 	Longitude float64
 	Latitude  float64
 }
@@ -31,7 +30,6 @@ type Interests []Interest
 
 // Interest type
 type Interest struct {
-	Id     string `bson:"_id,omitempty"`
 	Name   string
 	Rating float64
 }
