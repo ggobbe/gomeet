@@ -19,30 +19,29 @@
   </div>
 </div>
 <div class="row">
-  {{range .Data}}
-  <div class="col-md-3">
-      <div class="well">
-        <script type="text/javascript">
-          users.push({
-            name : {{.User.Name}},
-             location : {
-                lat : {{.User.Location.Latitude}},
-                lng: {{.User.Location.Longitude}}
-              }
-          });
-
-        </script>
-        <h3>{{.User.Name}}</h3>
-        <a href="#" id="usr-zoom-{{.User.Name}}">Zoom</a>
-        <h3>Interests</h3>
-        <ul>
-          {{range .User.Interests}}
-            <li>{{.Name}} ({{.Rating}})</p>
-          {{end}}
-        </ul>
-      </div>
-  </div>
-  {{end}}
+    {{range .Data}}
+    <div class="col-md-3">
+        <div class="well">
+            <script type="text/javascript">
+            users.push({
+                name : {{.User.Name}},
+                location : {
+                    lat : {{.User.Location.Latitude}},
+                    lng: {{.User.Location.Longitude}}
+                }
+            });
+            </script>
+            <h3>{{.User.Name}}</h3>
+            <a href="#" id="usr-zoom-{{.User.Name}}">Zoom</a>
+            <h3>Interests</h3>
+            <ul>
+                {{range .User.Interests}}
+                <li>{{.Name}} ({{.Rating}})</li>
+                {{end}}
+            </ul>
+        </div>
+    </div>
+    {{end}}
 </div>
 
 <script src="scripts/home.js"></script>
