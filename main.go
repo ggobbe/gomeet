@@ -72,9 +72,8 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	userRepo, err := user.GetRepo()
-	utils.CheckErrorMsg(err, "Failed to create repo")
-	users, err := userRepo.GetUsers()
+
+	users, err := user.Repository.GetUsers()
 	if err != nil {
 		return
 	}
@@ -86,10 +85,7 @@ func profileHandler(w http.ResponseWriter, r *http.Request) {
 	// Display the profile of somebody else
 	vars := mux.Vars(r)
 	if username, ok := vars["username"]; ok {
-
-		userRepo, err := user.GetRepo()
-		utils.CheckErrorMsg(err, "Failed to create repo")
-		user, err := userRepo.GetUser(username)
+		user, err := user.Repository.GetUser(username)
 
 		if err != nil {
 			return
@@ -108,7 +104,7 @@ func profileHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func interestAddHandler(w http.ResponseWriter, r *http.Request) {
-	name := r.FormValue("name")
+	name := r.FormValue("interest")
 	rating, err := strconv.ParseFloat(r.FormValue("rating"), 64)
 	utils.CheckError(err)
 	usr, err := user.GetSessionUser(w, r)
@@ -117,5 +113,8 @@ func interestAddHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	interest := user.NewInterest(name, rating)
 	usr.Interests = append(usr.Interests, *interest)
+
+	err = user.Repository.SaveUser(*usr)
+
 	http.Redirect(w, r, "/profile", http.StatusFound)
 }

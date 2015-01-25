@@ -5,25 +5,29 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
-	"log"
 )
 
 //FileRepo is a file based user repository
 type FileRepo struct {
 	filepath string
-	usersMap map[string]User
 	users    []User
 }
 
 // GetUser gets a user per his username
 func (r FileRepo) GetUser(name string) (*User, error) {
+	var result *User
+	for _, u := range r.users {
+		if u.Name == name {
+			result = &u
+			break
+		}
+	}
 
-	usr, ok := r.usersMap[name]
-	if !ok {
+	if result == nil {
 		return nil, errors.New("User doesn't exists")
 	}
 
-	return &usr, nil
+	return result, nil
 }
 
 //GetUsers is a function returning a list of users
@@ -33,22 +37,19 @@ func (r FileRepo) GetUsers() ([]User, error) {
 
 //SaveUser is a function to persist user changes
 func (r FileRepo) SaveUser(usr User) error {
-	_, ok := r.usersMap[usr.Name]
+	_, err := r.GetUser(usr.Name)
 
-	if !ok {
-		r.usersMap[usr.Name] = usr
+	if err != nil {
 		r.users = append(r.users, usr)
 	} else {
-		r.usersMap[usr.Name] = usr
 		for i, val := range r.users {
 			if val.Name == usr.Name {
 				r.users[i] = usr
 			}
 		}
-
 	}
-	log.Printf("(%v)", r)
-	err := r.saveToFile()
+
+	err = r.saveToFile()
 	if err != nil {
 		return err
 	}
@@ -99,11 +100,5 @@ func NewRepo(filepath string) (*FileRepo, error) {
 	}
 	utils.CheckError(err)
 
-	usersMap := make(map[string]User)
-	for _, usr := range u {
-		localUsr := usr //iteration variable usr is reused in the loop
-		usersMap[localUsr.Name] = localUsr
-	}
-
-	return &FileRepo{users: u, usersMap: usersMap, filepath: filepath}, nil
+	return &FileRepo{users: u, filepath: filepath}, nil
 }

@@ -13,6 +13,9 @@ import (
 
 var store = sessions.NewCookieStore([]byte("gomeet-for-gopher-gala-by-gg-and-mk"))
 
+//Default user repository
+var Repository = GetRepo()
+
 // User type
 type User struct {
 	Name      string
@@ -35,16 +38,19 @@ type Interest struct {
 	Rating float64
 }
 
-// Repository type
-type Repository interface {
+// IAmRepository type
+type IAmRepository interface {
 	GetUsers() ([]User, error)
 	GetUser(name string) (User, error)
 	SaveUser(usr User) error
 }
 
 //GetRepo is a FileRepo factory
-func GetRepo() (*FileRepo, error) {
-	return NewRepo("data/users.json")
+func GetRepo() *FileRepo {
+	repo, err := NewRepo("data/users.json")
+	utils.CheckErrorMsg(err, "Failed to create repo")
+
+	return repo
 }
 
 // NewUser creates a new user
@@ -76,10 +82,8 @@ func GetSessionUser(w http.ResponseWriter, r *http.Request) (*User, error) {
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return nil, errors.New("No user in the session")
 	}
-	fileRepo, err := GetRepo()
-	utils.CheckErrorMsg(err, "Failed to create repository")
 
-	user, err := fileRepo.GetUser(username.(string))
+	user, err := Repository.GetUser(username.(string))
 	if err != nil {
 		if err := LogOutSessionUser(w, r); err != nil {
 			log.Fatal(err)
