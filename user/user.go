@@ -11,8 +11,6 @@ import (
 	"github.com/gorilla/sessions"
 )
 
-var store = sessions.NewCookieStore([]byte("gomeet-for-gopher-gala-by-gg-and-mk"))
-
 // User type
 type User struct {
 	Name      string
@@ -70,7 +68,7 @@ func (ui Interests) AsMap() map[interface{}]float64 {
 }
 
 // GetSessionUser gets the user stored in the session if there is one
-func GetSessionUser(w http.ResponseWriter, r *http.Request, repo IAmRepository) (*User, error) {
+func GetSessionUser(w http.ResponseWriter, r *http.Request, repo IAmRepository, store *sessions.CookieStore) (*User, error) {
 	session, err := store.Get(r, "user-session")
 	utils.CheckError(err)
 	username, ok := session.Values["username"]
@@ -81,7 +79,7 @@ func GetSessionUser(w http.ResponseWriter, r *http.Request, repo IAmRepository) 
 
 	user, err := repo.GetUser(username.(string))
 	if err != nil {
-		if err := LogOutSessionUser(w, r); err != nil {
+		if err := LogOutSessionUser(w, r, store); err != nil {
 			log.Fatal(err)
 		}
 		http.Redirect(w, r, "/login", http.StatusFound)
@@ -91,7 +89,7 @@ func GetSessionUser(w http.ResponseWriter, r *http.Request, repo IAmRepository) 
 }
 
 // SetSessionUser sets the user in the session
-func SetSessionUser(w http.ResponseWriter, r *http.Request, username string) error {
+func SetSessionUser(w http.ResponseWriter, r *http.Request, username string, store *sessions.CookieStore) error {
 	session, err := store.Get(r, "user-session")
 	utils.CheckError(err)
 	if strings.Trim(username, " ") == "" {
@@ -102,7 +100,7 @@ func SetSessionUser(w http.ResponseWriter, r *http.Request, username string) err
 }
 
 // LogOutSessionUser logs out the user
-func LogOutSessionUser(w http.ResponseWriter, r *http.Request) error {
+func LogOutSessionUser(w http.ResponseWriter, r *http.Request, store *sessions.CookieStore) error {
 	session, err := store.Get(r, "user-session")
 	utils.CheckError(err)
 	delete(session.Values, "username")

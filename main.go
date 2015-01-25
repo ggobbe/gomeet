@@ -6,11 +6,11 @@ import (
 	"edigophers/utils"
 	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"github.com/gorilla/sessions"
 )
 
 var templates = template.Must(template.ParseFiles(
@@ -18,6 +18,7 @@ var templates = template.Must(template.ParseFiles(
 	"tpl/home.html", "tpl/login.html", "tpl/profile.html", "tpl/list.html"))
 
 var repository = user.GetRepo()
+var store = sessions.NewCookieStore([]byte("gomeet-for-gopher-gala-by-gg-and-mk"))
 
 type page struct {
 	Title string
@@ -45,7 +46,7 @@ func display(w http.ResponseWriter, tmpl string, data interface{}) {
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-	usr, err := user.GetSessionUser(w, r, repository)
+	usr, err := user.GetSessionUser(w, r, repository, store)
 	if err != nil {
 		return
 	}
@@ -61,7 +62,7 @@ func loginGetHandler(w http.ResponseWriter, r *http.Request) {
 
 func loginPostHandler(w http.ResponseWriter, r *http.Request) {
 	username := r.FormValue("username")
-	if user.SetSessionUser(w, r, username) != nil {
+	if user.SetSessionUser(w, r, username, store) != nil {
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
@@ -69,12 +70,12 @@ func loginPostHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func logoutHandler(w http.ResponseWriter, r *http.Request) {
-	utils.CheckError(user.LogOutSessionUser(w, r))
+	utils.CheckError(user.LogOutSessionUser(w, r, store))
 	http.Redirect(w, r, "/login", http.StatusFound)
 }
 
 func listHandler(w http.ResponseWriter, r *http.Request) {
-	usr, err := user.GetSessionUser(w, r, repository)
+	usr, err := user.GetSessionUser(w, r, repository, store)
 	if err != nil {
 		return
 	}
@@ -101,11 +102,8 @@ func profileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Display the profile of the current user
-	user, err := user.GetSessionUser(w, r, repository)
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
+	user, err := user.GetSessionUser(w, r, repository, store)
+	utils.CheckError(err)
 	display(w, "profile", &page{Title: "Your Profile", User: user})
 }
 
@@ -113,7 +111,7 @@ func interestAddHandler(w http.ResponseWriter, r *http.Request) {
 	name := r.FormValue("interest")
 	rating, err := strconv.ParseFloat(r.FormValue("rating"), 64)
 	utils.CheckError(err)
-	usr, err := user.GetSessionUser(w, r, repository)
+	usr, err := user.GetSessionUser(w, r, repository, store)
 	if err != nil {
 		return
 	}
