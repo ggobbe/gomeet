@@ -5,6 +5,7 @@ import (
 	"edigophers/user"
 	"edigophers/utils"
 	"fmt"
+	"html"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -122,7 +123,7 @@ func profileHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func interestAddHandler(w http.ResponseWriter, r *http.Request) {
-	name := strings.Trim(r.FormValue("interest"), " ")
+	name := html.EscapeString(strings.Trim(r.FormValue("interest"), " "))
 	rating, err := strconv.ParseFloat(r.FormValue("rating"), 64)
 	if name == "" || err != nil {
 		http.Redirect(w, r, "/profile", http.StatusFound)
