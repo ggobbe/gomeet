@@ -8,6 +8,7 @@ import (
 	"html/template"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
@@ -121,11 +122,15 @@ func profileHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func interestAddHandler(w http.ResponseWriter, r *http.Request) {
-	name := r.FormValue("interest")
+	name := strings.Trim(r.FormValue("interest"), " ")
 	rating, err := strconv.ParseFloat(r.FormValue("rating"), 64)
-	utils.CheckError(err)
+	if name == "" || err != nil {
+		http.Redirect(w, r, "/profile", http.StatusFound)
+		return
+	}
 	usr, err := user.GetSessionUser(w, r, repository, store)
 	if err != nil {
+		http.Redirect(w, r, "/profile", http.StatusFound)
 		return
 	}
 	interest := user.NewInterest(name, rating)
