@@ -16,6 +16,18 @@ $(function() {
       icon: 'images/markers/darkGreen_MarkerA.png'
     });
 
+    // Add the circle for this city to the map.
+    var radius = new google.maps.Circle({
+      strokeColor: '#00FF00',
+      strokeOpacity: 0.2,
+      strokeWeight: 2,
+      fillColor: '#00AA00',
+      fillOpacity: 0.35,
+      map: map,
+      center: user.location,
+      radius: 20000
+    });
+
     var removeAnimation = $.noop
     $.each(users, function(index, user){
       var marker = new google.maps.Marker({
