@@ -33,7 +33,7 @@ type SimpleRecommender struct {
 
 const (
 	minScore       = 0.4 // Min score for neighborhood matching
-	maxGeoDistance = 10  // km max distance
+	maxGeoDistance = 20  // km max distance
 )
 
 //GetRecommendations is a method for returning recommendations of users with similiar interests
@@ -92,13 +92,12 @@ func prepareData(sr SimpleRecommender, usr *user.User) (map[string]user.User, *r
 	userMap := make(map[string]user.User)
 
 	for _, u := range users {
+		userMap[u.Name] = u
 
 		targetLocation := geo.NewPoint(u.Location.Latitude, u.Location.Longitude)
 		if srcLocation.GreatCircleDistance(targetLocation) <= maxGeoDistance {
-			userMap[u.Name] = u
 			interests.Add(u.Name, u.Interests.AsMap())
 		}
-
 	}
 	if _, ok := userMap[usr.Name]; !ok {
 		interests.Add(usr.Name, usr.Interests.AsMap())
