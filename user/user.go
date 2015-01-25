@@ -13,7 +13,7 @@ import (
 
 // User type
 type User struct {
-	Id        string `bson:"_id,omitempty"`
+	ID        string `bson:"_id,omitempty"`
 	Name      string
 	Location  Location
 	Interests Interests
@@ -34,18 +34,11 @@ type Interest struct {
 	Rating float64
 }
 
-// IAmRepository type
-type IAmRepository interface {
+// Repository type
+type Repository interface {
 	GetUsers() ([]User, error)
 	GetUser(name string) (*User, error)
-}
-
-//GetRepo is a FileRepo factory
-func GetRepo() *FileRepo {
-	repo, err := NewRepo("data/users.json")
-	utils.CheckErrorMsg(err, "Failed to create repo")
-
-	return repo
+	SaveUser(user User) error
 }
 
 // NewUser creates a new user
@@ -69,7 +62,7 @@ func (ui Interests) AsMap() map[interface{}]float64 {
 }
 
 // GetSessionUser gets the user stored in the session if there is one
-func GetSessionUser(w http.ResponseWriter, r *http.Request, repo IAmRepository, store *sessions.CookieStore) (*User, error) {
+func GetSessionUser(w http.ResponseWriter, r *http.Request, repo Repository, store *sessions.CookieStore) (*User, error) {
 	session, err := store.Get(r, "user-session")
 	utils.CheckError(err)
 	username, ok := session.Values["username"]

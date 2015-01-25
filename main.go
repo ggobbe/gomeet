@@ -11,32 +11,24 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
-	"gopkg.in/mgo.v2"
 )
 
 const (
 	mgoURL = "localhost"
 	mgoDb  = "gomeet"
-	userC  = "users"
 )
 
 var templates = template.Must(template.ParseFiles(
 	"tpl/header.html", "tpl/footer.html",
 	"tpl/home.html", "tpl/login.html", "tpl/profile.html", "tpl/list.html"))
 
-var repository = user.GetRepo()
+var repository = user.NewMgoRepo(mgoURL, mgoDb)
 var store = sessions.NewCookieStore([]byte("gomeet-for-gopher-gala-by-gg-and-mk"))
 
 type page struct {
 	Title string
 	User  *user.User
 	Data  interface{}
-}
-
-func getUserCollection() *mgo.Collection {
-	s, err := mgo.Dial(mgoURL)
-	utils.CheckError(err)
-	return s.DB(mgoDb).C(userC)
 }
 
 func main() {

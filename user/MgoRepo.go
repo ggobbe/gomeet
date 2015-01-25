@@ -14,6 +14,8 @@ type MgoRepo struct {
 	collection string
 }
 
+const collection = "users"
+
 func (r MgoRepo) getUserCollection() *mgo.Collection {
 	s, err := mgo.Dial(r.url)
 	utils.CheckError(err)
@@ -46,4 +48,10 @@ func (r MgoRepo) GetUsers() ([]User, error) {
 func (r MgoRepo) SaveUser(usr User) error {
 	c := r.getUserCollection()
 	return c.Insert(usr)
+}
+
+// NewMgoRepo creates a new Mongo database repository
+func NewMgoRepo(url, database string) Repository {
+	repo := MgoRepo{url: url, database: database, collection: collection}
+	return Repository(repo)
 }

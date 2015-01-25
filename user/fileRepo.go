@@ -92,13 +92,13 @@ func loadFile(filepath string) ([]User, error) {
 }
 
 //NewRepo creates a new File base repository
-func NewRepo(filepath string) (*FileRepo, error) {
+func NewRepo(filepath string) (Repository, error) {
 
 	u, err := loadFile(filepath)
 	if err != nil {
 		return nil, err
 	}
 	utils.CheckError(err)
-
-	return &FileRepo{users: u, filepath: filepath}, nil
+	repo := FileRepo{users: u, filepath: filepath}
+	return Repository(repo), nil
 }

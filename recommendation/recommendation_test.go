@@ -15,6 +15,10 @@ func (m RepoMock) GetUser(name string) (*user.User, error) {
 	return nil, nil
 }
 
+func (m RepoMock) SaveUser(user user.User) error {
+	return nil
+}
+
 func TestHandleEmptyUserRepository(t *testing.T) {
 
 	var repoMock []user.User
