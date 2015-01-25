@@ -2,6 +2,7 @@ package recommendation
 
 import (
 	"edigophers/user"
+	"edigophers/utils"
 	"log"
 
 	"github.com/muesli/regommend"
@@ -50,7 +51,7 @@ func (sr SimpleRecommender) GetRecommendations(usr *user.User) ([]Recommendation
 			if !ok {
 				log.Printf("[WARN] User map does not contain user with id:(%s)", rec.Key.(string))
 			}
-			result = append(result, Recommendation{User: u, Score: rec.Distance})
+			result = append(result, Recommendation{User: u, Score: utils.Round(rec.Distance*100, 0)})
 		}
 	}
 
