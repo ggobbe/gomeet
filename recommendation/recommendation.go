@@ -4,6 +4,7 @@ import (
 	"edigophers/user"
 	"edigophers/utils"
 	"log"
+	"math"
 
 	"github.com/muesli/regommend"
 )
@@ -51,11 +52,28 @@ func (sr SimpleRecommender) GetRecommendations(usr *user.User) ([]Recommendation
 			if !ok {
 				log.Printf("[WARN] User map does not contain user with id:(%s)", rec.Key.(string))
 			}
+			userInterests := usr.Interests.AsMap()
+			u.Interests = calculateInterestMatches(userInterests, u.Interests)
+
 			result = append(result, Recommendation{User: u, Score: utils.Round(rec.Distance*100, 0)})
 		}
 	}
 
 	return result, nil
+}
+
+func calculateInterestMatches(srcInterests map[interface{}]float64, targetInterests []user.Interest) []user.Interest {
+
+	for i, interest := range targetInterests {
+		srcValue, ok := srcInterests[interest.Name]
+		if !ok {
+			srcValue = 10
+		}
+
+		targetInterests[i].Distance = 10 - math.Abs(srcValue-interest.Rating)
+	}
+
+	return targetInterests
 }
 
 func prepareData(sr SimpleRecommender, usr *user.User) (map[string]user.User, *regommend.RegommendTable, error) {

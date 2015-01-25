@@ -38,8 +38,9 @@ func (a ByRatingDesc) Less(i, j int) bool { return a[i].Rating > a[j].Rating }
 
 // Interest type
 type Interest struct {
-	Name   string
-	Rating float64
+	Name     string
+	Rating   float64
+	Distance float64
 }
 
 // Repository type
@@ -56,7 +57,7 @@ func NewUser(name string, interests Interests) *User {
 
 // NewInterest creates a new interest
 func NewInterest(name string, rating float64) *Interest {
-	return &Interest{Name: name, Rating: rating}
+	return &Interest{Name: name, Rating: rating, Distance: -1.0}
 }
 
 // AsMap creates a map from the users interests
