@@ -63,7 +63,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 
 	_ = recommendation.New(repository)
 	recommender := recommendation.New(repository)
-	recs, err := recommender.GetRecommendations(usr)
+	recs, err := recommender.GetRecommendations(*usr)
 	var data interface{}
 	if err != nil {
 		data = displayPageError("Failed to fetch recommendations")

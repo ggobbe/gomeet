@@ -32,12 +32,12 @@ type SimpleRecommender struct {
 }
 
 const (
-	minScore       = 0.4 // Min score for neighborhood matching
-	maxGeoDistance = 20  // km max distance
+	minScore       = 0.4  // Min score for neighborhood matching
+	maxGeoDistance = 20.0 // km max distance
 )
 
 //GetRecommendations is a method for returning recommendations of users with similiar interests
-func (sr SimpleRecommender) GetRecommendations(usr *user.User) ([]Recommendation, error) {
+func (sr SimpleRecommender) GetRecommendations(usr user.User) ([]Recommendation, error) {
 	userMap, interests, err := prepareData(sr, usr)
 
 	neighbours, err := interests.Neighbors(usr.Name)
@@ -80,7 +80,7 @@ func calculateInterestMatches(srcInterests map[interface{}]float64, targetIntere
 	return targetInterests
 }
 
-func prepareData(sr SimpleRecommender, usr *user.User) (map[string]user.User, *regommend.RegommendTable, error) {
+func prepareData(sr SimpleRecommender, usr user.User) (map[string]user.User, *regommend.RegommendTable, error) {
 	users, err := sr.uRepo.GetUsers()
 	if err != nil {
 		return nil, nil, err
@@ -89,13 +89,17 @@ func prepareData(sr SimpleRecommender, usr *user.User) (map[string]user.User, *r
 	srcLocation := geo.NewPoint(usr.Location.Latitude, usr.Location.Longitude)
 
 	interests := regommend.Table("interests")
+	interests.Flush() //Remove all items from interests table
+
 	userMap := make(map[string]user.User)
 
 	for _, u := range users {
 		userMap[u.Name] = u
 
 		targetLocation := geo.NewPoint(u.Location.Latitude, u.Location.Longitude)
+
 		if srcLocation.GreatCircleDistance(targetLocation) <= maxGeoDistance {
+
 			interests.Add(u.Name, u.Interests.AsMap())
 		}
 	}
