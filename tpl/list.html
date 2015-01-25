@@ -2,9 +2,11 @@
 {{template "header" .}}
 
 <h2>{{.Title}}</h2>
-<ul>
+<ul class="list-group">
     {{range .Data}}
-    <li><a href="/profile/{{.Name}}" title="View profile">{{.Name}}</a></li>
+    <li class="list-group-item">
+        <a href="/profile/{{.Name}}" title="View profile">{{.Name}}</a>
+    </li>
     {{end}}
 </ul>
 
