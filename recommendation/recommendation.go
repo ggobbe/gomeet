@@ -6,6 +6,7 @@ import (
 	"log"
 	"math"
 
+	"github.com/kellydunn/golang-geo"
 	"github.com/muesli/regommend"
 )
 
@@ -30,10 +31,13 @@ type SimpleRecommender struct {
 	uRepo user.Repository
 }
 
+const (
+	minScore       = 0.4 // Min score for neighborhood matching
+	maxGeoDistance = 10  // km max distance
+)
+
 //GetRecommendations is a method for returning recommendations of users with similiar interests
 func (sr SimpleRecommender) GetRecommendations(usr *user.User) ([]Recommendation, error) {
-	minScore := 0.4
-
 	userMap, interests, err := prepareData(sr, usr)
 
 	neighbours, err := interests.Neighbors(usr.Name)
@@ -82,12 +86,19 @@ func prepareData(sr SimpleRecommender, usr *user.User) (map[string]user.User, *r
 		return nil, nil, err
 	}
 
+	srcLocation := geo.NewPoint(usr.Location.Latitude, usr.Location.Longitude)
+
 	interests := regommend.Table("interests")
 	userMap := make(map[string]user.User)
 
 	for _, u := range users {
-		userMap[u.Name] = u
-		interests.Add(u.Name, u.Interests.AsMap())
+
+		targetLocation := geo.NewPoint(u.Location.Latitude, u.Location.Longitude)
+		if srcLocation.GreatCircleDistance(targetLocation) <= maxGeoDistance {
+			userMap[u.Name] = u
+			interests.Add(u.Name, u.Interests.AsMap())
+		}
+
 	}
 	if _, ok := userMap[usr.Name]; !ok {
 		interests.Add(usr.Name, usr.Interests.AsMap())
