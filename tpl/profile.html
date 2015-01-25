@@ -7,7 +7,7 @@
         <p>Your current location is: {{.User.Location.Longitude}}, {{.User.Location.Latitude}}</p>
         <h3>Your interests</h3>
         <form action="/interest/add" method="POST">
-            <div class="row">
+            <div class="row spacer-down-xs">
                 <div class="col-md-6"><input type="text" name="interest" class="form-control" placeholder="Interest" /></div>
                 <div class="col-md-3"><input type="number" name="rating" class="form-control" placeholder="Rating" /></div>
                 <div class="col-md-3"><input type="submit" name="add-interest" class="btn btn-primary" value="Add" /></div>

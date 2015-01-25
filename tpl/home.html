@@ -13,7 +13,7 @@
 
 <h2>Welcome {{.User.Name}}</h2>
 <h3>What would you like to do now?</h3>
-<div class="row">
+<div class="row spacer-down-xs">
   <div class="col-md-12">
     <div id="map-canvas" style="width:100%;height:300px;"></div>
   </div>
@@ -21,24 +21,26 @@
 <div class="row">
   {{range .Data}}
   <div class="col-md-3">
-    <script type="text/javascript">
-      users.push({
-        name : {{.User.Name}},
-         location : {
-            lat : {{.User.Location.Latitude}},
-            lng: {{.User.Location.Longitude}}
-          }
-      });
+      <div class="well">
+        <script type="text/javascript">
+          users.push({
+            name : {{.User.Name}},
+             location : {
+                lat : {{.User.Location.Latitude}},
+                lng: {{.User.Location.Longitude}}
+              }
+          });
 
-    </script>
-    <h3>{{.User.Name}}</h3>
-    <a href="#" id="usr-zoom-{{.User.Name}}">Zoom</a>
-    <h3>Interests</h3>
-    <ul>
-      {{range .User.Interests}}
-        <li>{{.Name}} ({{.Rating}})</p>
-      {{end}}
-    </ul>
+        </script>
+        <h3>{{.User.Name}}</h3>
+        <a href="#" id="usr-zoom-{{.User.Name}}">Zoom</a>
+        <h3>Interests</h3>
+        <ul>
+          {{range .User.Interests}}
+            <li>{{.Name}} ({{.Rating}})</p>
+          {{end}}
+        </ul>
+      </div>
   </div>
   {{end}}
 </div>
