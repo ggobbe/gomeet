@@ -31,8 +31,12 @@
                 }
             });
             </script>
-            <h3>{{.User.Name}}</h3>
-            <a href="#" id="usr-zoom-{{.User.Name}}">Zoom</a>
+          <div>
+            <h3>
+              <a href="/profile/{{.User.Name}}">{{.User.Name}}</a>
+              <a href="#" class="pull-right" id="usr-zoom-{{.User.Name}}"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></a>
+            </h3>
+          </div>
             <h3>Interests</h3>
             <ul>
                 {{range .User.Interests}}
