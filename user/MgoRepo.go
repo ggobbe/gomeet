@@ -2,6 +2,7 @@ package user
 
 import (
 	"edigophers/utils"
+	"sort"
 
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -32,6 +33,7 @@ func (r MgoRepo) GetUser(name string) (*User, error) {
 	if err != nil {
 		return nil, err
 	}
+	sort.Sort(ByRatingDesc(user.Interests))
 	return &user, nil
 }
 
@@ -44,6 +46,9 @@ func (r MgoRepo) GetUsers() ([]User, error) {
 	err := c.Find(nil).All(&users)
 	if err != nil {
 		return nil, err
+	}
+	for _, user := range users {
+		sort.Sort(ByRatingDesc(user.Interests))
 	}
 	return users, nil
 }

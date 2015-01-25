@@ -29,6 +29,13 @@ type Location struct {
 // Interests type
 type Interests []Interest
 
+// ByRatingDesc sorting type for Interests
+type ByRatingDesc []Interest
+
+func (a ByRatingDesc) Len() int           { return len(a) }
+func (a ByRatingDesc) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a ByRatingDesc) Less(i, j int) bool { return a[i].Rating > a[j].Rating }
+
 // Interest type
 type Interest struct {
 	Name   string
