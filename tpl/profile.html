@@ -14,14 +14,7 @@
         </form>
         <div class="row">
             <div class="col-md-6">
-                <ul class="list-group">
-                    {{range .User.Interests}}
-                    <li class="list-group-item">
-                        <span class="badge">{{.Rating}}</span>
-                        {{.Name}}
-                    </li>
-                    {{end}}
-                </ul>
+              {{template "helpers/interests" .User.Interests}}
             </div>
         </div>
     </div>

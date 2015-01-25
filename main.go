@@ -20,7 +20,8 @@ const (
 
 var templates = template.Must(template.ParseFiles(
 	"tpl/header.html", "tpl/footer.html",
-	"tpl/home.html", "tpl/login.html", "tpl/profile.html", "tpl/list.html"))
+	"tpl/home.html", "tpl/login.html", "tpl/profile.html", "tpl/list.html",
+	"tpl/helpers/interests.html"))
 
 var repository = user.NewMgoRepo(mgoURL, mgoDb)
 var store = sessions.NewCookieStore([]byte("gomeet-for-gopher-gala-by-gg-and-mk"))
