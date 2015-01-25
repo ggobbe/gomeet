@@ -18,9 +18,14 @@ type Recommender interface {
 	GetRecommendations(user *user.User) ([]Recommendation, error)
 }
 
+//New creates a new SimpleRecommender instance
+func New(userRepo user.IAmRepository) *SimpleRecommender {
+	return &SimpleRecommender{uRepo: userRepo}
+}
+
 //SimpleRecommender is a simple implementation of the Recommender using regocommend neighbours
 type SimpleRecommender struct {
-	uRepo user.Repository
+	uRepo user.IAmRepository
 }
 
 //GetRecommendations is a method for returning recommendations of users with similiar interests

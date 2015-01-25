@@ -13,9 +13,6 @@ import (
 
 var store = sessions.NewCookieStore([]byte("gomeet-for-gopher-gala-by-gg-and-mk"))
 
-//Default user repository
-var Repository = GetRepo()
-
 // User type
 type User struct {
 	Name      string
@@ -41,8 +38,7 @@ type Interest struct {
 // IAmRepository type
 type IAmRepository interface {
 	GetUsers() ([]User, error)
-	GetUser(name string) (User, error)
-	SaveUser(usr User) error
+	GetUser(name string) (*User, error)
 }
 
 //GetRepo is a FileRepo factory
@@ -74,7 +70,7 @@ func (ui Interests) AsMap() map[interface{}]float64 {
 }
 
 // GetSessionUser gets the user stored in the session if there is one
-func GetSessionUser(w http.ResponseWriter, r *http.Request) (*User, error) {
+func GetSessionUser(w http.ResponseWriter, r *http.Request, repo IAmRepository) (*User, error) {
 	session, err := store.Get(r, "user-session")
 	utils.CheckError(err)
 	username, ok := session.Values["username"]
@@ -83,7 +79,7 @@ func GetSessionUser(w http.ResponseWriter, r *http.Request) (*User, error) {
 		return nil, errors.New("No user in the session")
 	}
 
-	user, err := Repository.GetUser(username.(string))
+	user, err := repo.GetUser(username.(string))
 	if err != nil {
 		if err := LogOutSessionUser(w, r); err != nil {
 			log.Fatal(err)

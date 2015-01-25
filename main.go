@@ -1,6 +1,7 @@
 package main
 
 import (
+	"edigophers/recommendation"
 	"edigophers/user"
 	"edigophers/utils"
 	"fmt"
@@ -15,6 +16,8 @@ import (
 var templates = template.Must(template.ParseFiles(
 	"tpl/header.html", "tpl/footer.html",
 	"tpl/home.html", "tpl/login.html", "tpl/profile.html", "tpl/list.html"))
+
+var repository = user.GetRepo()
 
 type page struct {
 	Title string
@@ -42,11 +45,14 @@ func display(w http.ResponseWriter, tmpl string, data interface{}) {
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-	user, err := user.GetSessionUser(w, r)
+	usr, err := user.GetSessionUser(w, r, repository)
 	if err != nil {
 		return
 	}
-	display(w, "home", &page{Title: "Home", User: user})
+
+	_ = recommendation.New(repository)
+
+	display(w, "home", &page{Title: "What would you like to do?", User: usr})
 }
 
 func loginGetHandler(w http.ResponseWriter, r *http.Request) {
@@ -68,12 +74,12 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func listHandler(w http.ResponseWriter, r *http.Request) {
-	usr, err := user.GetSessionUser(w, r)
+	usr, err := user.GetSessionUser(w, r, repository)
 	if err != nil {
 		return
 	}
 
-	users, err := user.Repository.GetUsers()
+	users, err := repository.GetUsers()
 	if err != nil {
 		return
 	}
@@ -85,7 +91,7 @@ func profileHandler(w http.ResponseWriter, r *http.Request) {
 	// Display the profile of somebody else
 	vars := mux.Vars(r)
 	if username, ok := vars["username"]; ok {
-		user, err := user.Repository.GetUser(username)
+		user, err := repository.GetUser(username)
 
 		if err != nil {
 			return
@@ -95,7 +101,7 @@ func profileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Display the profile of the current user
-	user, err := user.GetSessionUser(w, r)
+	user, err := user.GetSessionUser(w, r, repository)
 	if err != nil {
 		log.Fatal(err)
 		return
@@ -107,14 +113,14 @@ func interestAddHandler(w http.ResponseWriter, r *http.Request) {
 	name := r.FormValue("interest")
 	rating, err := strconv.ParseFloat(r.FormValue("rating"), 64)
 	utils.CheckError(err)
-	usr, err := user.GetSessionUser(w, r)
+	usr, err := user.GetSessionUser(w, r, repository)
 	if err != nil {
 		return
 	}
 	interest := user.NewInterest(name, rating)
 	usr.Interests = append(usr.Interests, *interest)
 
-	err = user.Repository.SaveUser(*usr)
+	err = repository.SaveUser(*usr)
 
 	http.Redirect(w, r, "/profile", http.StatusFound)
 }
