@@ -41,3 +41,9 @@ func (r MgoRepo) GetUsers() ([]User, error) {
 	}
 	return users, nil
 }
+
+// SaveUser saves a user to the database
+func (r MgoRepo) SaveUser(usr User) error {
+	c := r.getUserCollection()
+	return c.Insert(usr)
+}
