@@ -50,6 +50,8 @@ func display(w http.ResponseWriter, tmpl string, data interface{}) {
 	templates.ExecuteTemplate(w, tmpl, data)
 }
 
+type displayPageError string
+
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	usr, err := user.GetSessionUser(w, r, repository, store)
 	if err != nil {
@@ -57,8 +59,16 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_ = recommendation.New(repository)
+	recommender := recommendation.New(repository)
+	recs, err := recommender.GetRecommendations(usr)
+	var data interface{}
+	if err != nil {
+		data = displayPageError("Failed to fetch recommendations")
+	} else {
+		data = recs
+	}
 
-	display(w, "home", &page{Title: "What would you like to do?", User: usr})
+	display(w, "home", &page{Title: "Home", User: usr, Data: data})
 }
 
 func loginGetHandler(w http.ResponseWriter, r *http.Request) {

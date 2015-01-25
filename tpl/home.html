@@ -1,8 +1,50 @@
 {{define "home"}}
 {{template "header" .}}
+<script type="text/javascript">
+  var points = [];
+</script>
 
-<h2>{{.Title}}</h2>
-<div>Welcome {{.User.Name}}</div>
+<h2>Welcome {{.User.Name}}</h2>
+<h3>What would you like to do now?</h3>
+<div class="row">
+  <div class="col-md-12">
+    <div id="map-canvas" style="width:100%;height:300px;"></div>
+  </div>
+</div>
+<div class="row">
+  {{range .Data}}
+  <div class="col-md-3">
+    <script type="text/javascript">
+      points.push({lat : {{.User.Location.Latitude}}, lng: {{.User.Location.Longitude}}});
+    </script>
+    <h3>{{.User.Name}}</h3>
+    <p></p>
+    <h3>His interests</h3>
+    <ul>
+      {{range .User.Interests}}
+        <li>{{.Name}} ({{.Rating}})</p>
+      {{end}}
+    </ul>
+  </div>
+  {{end}}
+</div>
+
+  <script type="text/javascript">
+  // function initialize() {
+  //   var latLng = { lat: {{.User.Location.Latitude}}, lng: {{.User.Location.Longitude}}};
+  //   var mapOptions = {
+  //     center: latLng,
+  //     zoom: 10
+  //   };
+  //   var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+  //   var marker = new google.maps.Marker({
+  //     position: latLng,
+  //     map: map,
+  //     title:"Position"
+  //   });
+  // }
+  // setTimeout(initialize, 500);
+  </script>
 
 {{template "footer" .}}
 {{end}}

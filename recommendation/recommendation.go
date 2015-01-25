@@ -30,7 +30,7 @@ type SimpleRecommender struct {
 
 //GetRecommendations is a method for returning recommendations of users with similiar interests
 func (sr SimpleRecommender) GetRecommendations(usr *user.User) ([]Recommendation, error) {
-	minScore := 0.6
+	minScore := 0.4
 
 	userMap, interests, err := prepareData(sr, usr)
 
