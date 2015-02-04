@@ -5,11 +5,8 @@ import (
 	"gomeet/recommendation"
 	"gomeet/user"
 	"gomeet/utils"
-	"html"
 	"html/template"
 	"net/http"
-	"strconv"
-	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
@@ -118,24 +115,29 @@ func profileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	// Display the profile of the current user
 	user, err := user.GetSessionUser(w, r, repository, store)
-	utils.CheckError(err)
+	if err != nil {
+		return
+	}
 	display(w, "profile", &page{Title: "Your Profile", User: user})
 }
 
 func interestAddHandler(w http.ResponseWriter, r *http.Request) {
-	name := html.EscapeString(strings.Trim(r.FormValue("interest"), " "))
-	rating, err := strconv.ParseFloat(r.FormValue("rating"), 64)
-	if name == "" || err != nil {
+	/*
+		name := html.EscapeString(strings.Trim(r.FormValue("interest"), " "))
+		rating, err := strconv.ParseFloat(r.FormValue("rating"), 64)
+		if name == "" || err != nil {
+			http.Redirect(w, r, "/profile", http.StatusFound)
+			return
+		}
+		usr, err := user.GetSessionUser(w, r, repository, store)
+		if err != nil {
+			http.Redirect(w, r, "/profile", http.StatusFound)
+			return
+		}
+		interest := user.NewInterest(name, rating)
+		usr.Interests = append(usr.Interests, *interest)
+		utils.CheckError(repository.SaveUser(*usr))
 		http.Redirect(w, r, "/profile", http.StatusFound)
-		return
-	}
-	usr, err := user.GetSessionUser(w, r, repository, store)
-	if err != nil {
-		http.Redirect(w, r, "/profile", http.StatusFound)
-		return
-	}
-	interest := user.NewInterest(name, rating)
-	usr.Interests = append(usr.Interests, *interest)
-	utils.CheckError(repository.SaveUser(*usr))
+	*/
 	http.Redirect(w, r, "/profile", http.StatusFound)
 }
