@@ -1,10 +1,10 @@
 package main
 
 import (
-	"edigophers/recommendation"
-	"edigophers/user"
-	"edigophers/utils"
 	"fmt"
+	"gomeet/recommendation"
+	"gomeet/user"
+	"gomeet/utils"
 	"html"
 	"html/template"
 	"net/http"

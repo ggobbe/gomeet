@@ -1,8 +1,8 @@
 package user
 
 import (
-	"edigophers/utils"
 	"encoding/json"
+	"gomeet/utils"
 	"log"
 	"os"
 	"testing"

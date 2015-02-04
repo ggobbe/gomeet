@@ -1,7 +1,7 @@
 package user
 
 import (
-	"edigophers/utils"
+	"gomeet/utils"
 	"sort"
 
 	"gopkg.in/mgo.v2"

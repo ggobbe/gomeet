@@ -1,7 +1,7 @@
 package recommendation
 
 import (
-	"edigophers/user"
+	"gomeet/user"
 	"testing"
 )
 
@@ -24,7 +24,7 @@ func TestHandleEmptyUserRepository(t *testing.T) {
 	var repoMock []user.User
 	service := &SimpleRecommender{RepoMock(repoMock)}
 
-	_, err := service.GetRecommendations(&user.User{})
+	_, err := service.GetRecommendations(user.User{})
 
 	if err != nil {
 		t.Errorf("GetRecommendations failed: %s", err)
@@ -72,7 +72,7 @@ func TestHandleSimpleRecommendation(t *testing.T) {
 
 	service := &SimpleRecommender{RepoMock(repoMock)}
 
-	reco, err := service.GetRecommendations(testCase)
+	reco, err := service.GetRecommendations(*testCase)
 
 	if err != nil {
 		t.Errorf("GetRecommendations failed: %s", err)

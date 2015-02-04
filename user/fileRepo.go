@@ -1,9 +1,9 @@
 package user
 
 import (
-	"edigophers/utils"
 	"encoding/json"
 	"errors"
+	"gomeet/utils"
 	"io/ioutil"
 )
 

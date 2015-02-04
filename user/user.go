@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strings"
 
-	"edigophers/utils"
+	"gomeet/utils"
 
 	"github.com/gorilla/sessions"
 	"gopkg.in/mgo.v2/bson"

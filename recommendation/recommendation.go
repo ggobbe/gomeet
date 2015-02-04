@@ -1,8 +1,8 @@
 package recommendation
 
 import (
-	"edigophers/user"
-	"edigophers/utils"
+	"gomeet/user"
+	"gomeet/utils"
 	"log"
 	"math"
 
